@@ -88,7 +88,10 @@ leagues_name = ["english premier league","championship","league one","league two
 
 league_ids = [337,338,339,340,341,347,348,349,350,351,352,353,354,355,356,357,358,365,381,382,383,384]
 
-def iterate_through_leagues(driver, start, end, home_teams, away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids):
+def iterate_through_leagues(start, end, home_teams, away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids):
+    driver = driver_code()
+    time.sleep(2)
+    accept_cookies(driver)
     for i in range(start, end):
         driver.get(leagues_links[i])
         time.sleep(1)
@@ -137,9 +140,6 @@ def iterate_through_leagues(driver, start, end, home_teams, away_teams, match_ti
 
 
 def main():
-    driver = driver_code()
-    time.sleep(2)
-    accept_cookies(driver)
     home_teams = []
     away_teams = []
     match_times = []
@@ -149,7 +149,10 @@ def main():
     leagues_common_ids = []
     home_team_common_ids = []
     away_team_common_ids = []
-    iterate_through_leagues(driver, 0, 11, home_teams,away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids)
+    iterate_through_leagues(0,int(len(leagues_links) / 2), home_teams,away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids)
+    iterate_through_leagues(0,int(len(leagues_links) / 2),int(len(leagues_links)), home_teams,away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids)
+                            
+
 
 if __name__ == "__main__":
     main()
