@@ -22,6 +22,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime, timedelta, timezone
+import os
+from dotenv import load_dotenv
 
 def driver_code():
     options = ChromeOptions()
@@ -138,6 +140,23 @@ def iterate_through_leagues(start, end, home_teams, away_teams, match_times, mat
         
     driver.close()
 
+def establishDBConnection():
+    load_dotenv()
+    API_URL = os.getenv('API_URL')
+    API_KEY = os.getenv('API_KEY')
+    supabase = create_client(API_URL, API_KEY)
+    return supabase
+
+def getTeamCommonIds(team_names, team_common_ids):
+    for i in range(len(team_names)):
+        team_data = supabase.table('football_teams_sites').select('team_common_id').eq('team_name_website',team_names[i]).eq('website',"Flashscore").execute()
+        if(len(team_data.data) != 0):
+            list_value = list(team_data.data[0].values())
+            value = list_value[0]
+            team_common_ids.append(value)
+            print(f"Successfully Found Team {team_names[i]} with id {value}")
+
+
 
 def main():
     home_teams = []
@@ -151,6 +170,9 @@ def main():
     away_team_common_ids = []
     iterate_through_leagues(0,int(len(leagues_links) / 2), home_teams,away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids)
     iterate_through_leagues(0,int(len(leagues_links) / 2),int(len(leagues_links)), home_teams,away_teams, match_times, match_dates, match_ids, leagues, leagues_common_ids)
+    supabase = establishDBConnection()
+    getTeamCommonIds(home_teams, home_team_common_ids)
+    getTeamCommonIds(away_teams, away_team_common_ids)
                             
 
 
